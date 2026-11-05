@@ -1,0 +1,141 @@
+/* ============================================================
+   Dark / light theme
+   ============================================================ */
+
+:root { color-scheme: light; }
+[data-theme="dark"] {
+  color-scheme: dark;
+  --ink: #0c1116;
+  --ink-soft: #121a21;
+  --panel: #1a2430;
+  --panel-light: #253141;
+  --pitch: #7fa66a;
+  --pitch-bright: #a5cf94;
+  --cream: #e9efe7;
+  --muted: #92a399;
+  --line: rgba(233, 239, 231, 0.13);
+  --orange: #e3a34e;
+  --forest: #22303e;
+}
+
+/* Toggle button placement (keeps nav pinned right next to it). */
+.site-nav { margin-left: auto; }
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 14px;
+}
+
+.theme-toggle {
+  position: relative;
+  display: inline-grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--cream);
+  background: transparent;
+  transition: color 250ms ease, border-color 250ms ease, box-shadow 250ms ease;
+}
+.theme-toggle:hover { color: var(--orange); border-color: var(--orange); box-shadow: 0 0 16px 2px rgba(189, 118, 29, 0.26); }
+.theme-toggle:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
+
+/* Expanding ring pulsed once per switch (see theme-ripple keyframes). */
+.theme-toggle::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border: 2px solid var(--orange);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+}
+.theme-toggle.is-switching::after { animation: theme-ripple 650ms cubic-bezier(0.2, 0.6, 0.35, 1); }
+
+.theme-toggle__icon {
+  --rest-rotation: 0deg;
+  position: relative;
+  display: block;
+  width: 15px;
+  height: 15px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  transform: rotate(var(--rest-rotation));
+  transition: transform 450ms cubic-bezier(0.34, 1.56, 0.64, 1), border-color 320ms ease, box-shadow 320ms ease;
+}
+[data-theme="dark"] .theme-toggle__icon {
+  --rest-rotation: -90deg;
+  border-color: transparent;
+  box-shadow: inset -4px -3px 0 0.5px currentColor;
+}
+
+@media (hover: hover) {
+  .theme-toggle:not(.is-switching):hover .theme-toggle__icon { animation: theme-wiggle 600ms ease; }
+}
+
+/* Eight sun-ray ticks formed by a conic-gradient ring mask; they collapse
+   into the disc when switching to dark mode. */
+.theme-rays {
+  position: absolute;
+  inset: -7px;
+  display: block;
+  background: repeating-conic-gradient(from 11.25deg, currentColor 0deg 7deg, transparent 7deg 45deg);
+  -webkit-mask-image: radial-gradient(closest-side, transparent 60%, #000 66%, #000 84%, transparent 92%);
+  mask-image: radial-gradient(closest-side, transparent 60%, #000 66%, #000 84%, transparent 92%);
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+  transition: opacity 360ms ease, transform 520ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+}
+[data-theme="dark"] .theme-rays {
+  opacity: 0;
+  transform: scale(0.25) rotate(40deg);
+}
+
+/* Three micro-stars beside the moon, twinkling slowly while idle in dark. */
+.theme-stars,
+.theme-stars::before,
+.theme-stars::after {
+  position: absolute;
+  display: block;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0;
+  transform: scale(0.3);
+  transition: opacity 420ms ease 120ms, transform 420ms cubic-bezier(0.34, 1.56, 0.64, 1) 120ms;
+  pointer-events: none;
+}
+.theme-stars { top: -5px; right: -6px; }
+.theme-stars::before { content: ""; top: -5px; left: -9px; }
+.theme-stars::after { content: ""; top: 9px; left: -7px; }
+[data-theme="dark"] .theme-stars,
+[data-theme="dark"] .theme-stars::before,
+[data-theme="dark"] .theme-stars::after { opacity: 0.85; transform: scale(1); }
+
+[data-theme="dark"] .theme-toggle:not(.is-switching) .theme-stars { animation: theme-twinkle 2.6s ease-in-out infinite; }
+[data-theme="dark"] .theme-toggle:not(.is-switching) .theme-stars::before { animation: theme-twinkle 3.4s ease-in-out 0.7s infinite; }
+[data-theme="dark"] .theme-toggle:not(.is-switching) .theme-stars::after { animation: theme-twinkle 3s ease-in-out 1.4s infinite; }
+
+.home-page .theme-toggle { color: rgba(255, 255, 255, 0.9); border-color: rgba(255, 255, 255, 0.35); }
+.home-page .theme-toggle:hover { color: #e2ad51; border-color: #e2ad51; box-shadow: 0 0 16px 2px rgba(226, 173, 81, 0.3); }
+.home-page .theme-toggle::after { border-color: #e2ad51; }
+
+/* Dark theme overrides for hardcoded light surfaces. */
+[data-theme="dark"] .site-header { background: rgba(9, 13, 19, 0.96); }
+[data-theme="dark"] .home-page .site-header { background: linear-gradient(to bottom, rgba(0, 0, 0, 0.72), transparent); }
+[data-theme="dark"] .hero { background: radial-gradient(circle at 78% 50%, #1a2632 0, #131b23 34%, #0c1116 68%); }
+[data-theme="dark"] .section-dark { background: #131b23; }
+[data-theme="dark"] .page-hero { background: linear-gradient(120deg, #0c1116 0%, #121a21 67%, #1a2430 100%); }
+[data-theme="dark"] .feature-card,
+[data-theme="dark"] .coach-card,
+[data-theme="dark"] .contact-form { background: #1a2430; }
+[data-theme="dark"] .site-footer { background: #10161d; }
+[data-theme="dark"] .footer-wave__layer--back { fill: rgba(127, 166, 106, 0.18); }
+[data-theme="dark"] .footer-wave__layer--front { fill: #10161d; }
+[data-theme="dark"] .card-glare { background: radial-gradient(300px circle at var(--glare-x, 50%) var(--glare-y, 30%), rgba(255, 255, 255, 0.12), transparent 62%); }
+[data-theme="dark"] .contact-form select { color-scheme: dark; }

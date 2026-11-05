@@ -1,0 +1,542 @@
+﻿/* Homepage-only, lightweight CSS animation. */
+html:not(.gsap-ready) .home-page .cinematic-kicker,
+html:not(.gsap-ready) .home-page .cinematic-content h1,
+html:not(.gsap-ready) .home-page .cinematic-copy,
+html:not(.gsap-ready) .home-page .cinematic-actions { animation: home-hero-rise 800ms both cubic-bezier(0.22, 0.8, 0.25, 1); }
+html:not(.gsap-ready) .home-page .cinematic-content h1 { animation-delay: 100ms; }
+html:not(.gsap-ready) .home-page .cinematic-copy { animation-delay: 220ms; }
+html:not(.gsap-ready) .home-page .cinematic-actions { animation-delay: 320ms; }
+html:not(.gsap-ready) .home-page .cinematic-player { animation: home-player-drift 11s ease-in-out infinite alternate; }
+html:not(.gsap-ready) .home-page .hero-ball { animation: home-ball-rotate 11s linear infinite; }
+html:not(.gsap-ready) .home-page .cinematic-background { animation: home-background-drift 18s ease-in-out infinite alternate; }
+
+@keyframes home-hero-rise {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes home-player-drift {
+  from { transform: translateX(0) scale(1); }
+  to { transform: translateX(-13px) scale(1.012); }
+}
+
+@keyframes home-ball-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes home-background-drift {
+  from { background-position: 45% 50%; }
+  to { background-position: 56% 47%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-page .cinematic-kicker,
+  .home-page .cinematic-content h1,
+  .home-page .cinematic-copy,
+  .home-page .cinematic-actions,
+  .home-page .cinematic-player,
+  .home-page .hero-ball,
+  .home-page .cinematic-background { animation: none; }
+}
+
+/* Desktop cricket-ball cursor. It is created only for fine mouse pointers. */
+@media (hover: hover) and (pointer: fine) {
+  .has-cricket-cursor,
+  .has-cricket-cursor * { cursor: none !important; }
+
+  .cricket-cursor,
+  .cricket-cursor-trail {
+    position: fixed;
+    z-index: 9999;
+    top: 0;
+    left: 0;
+    display: block;
+    pointer-events: none;
+    opacity: 0;
+    will-change: transform;
+  }
+
+  .cricket-cursor {
+    width: 26px;
+    height: 26px;
+    transition: opacity 160ms ease;
+  }
+
+  .cricket-cursor.is-visible,
+  .cricket-cursor-trail.is-visible { opacity: 1; }
+
+  .cricket-cursor__ball {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    border: 1px solid rgba(255, 227, 210, 0.82);
+    border-radius: 50%;
+    background: radial-gradient(circle at 31% 25%, #d9645b 0 5%, #ad302a 32%, #751512 75%, #55100e 100%);
+    box-shadow: inset -5px -6px 7px rgba(40, 0, 0, 0.3), 0 4px 10px rgba(0, 0, 0, 0.28);
+    transform: translate(-50%, -50%) rotate(var(--cursor-rotation, 0deg)) scale(1);
+    transition: transform 180ms cubic-bezier(0.2, 0.75, 0.25, 1), box-shadow 180ms ease;
+  }
+
+  .cricket-cursor__ball::after {
+    position: absolute;
+    top: 9%;
+    bottom: 9%;
+    left: 48%;
+    width: 4px;
+    border-right: 1px dashed #f5c6ad;
+    border-left: 1px dashed #f5c6ad;
+    border-radius: 50%;
+    content: "";
+  }
+
+  .cricket-cursor.is-hovering .cricket-cursor__ball {
+    box-shadow: inset -5px -6px 7px rgba(40, 0, 0, 0.25), 0 5px 16px rgba(133, 25, 20, 0.42);
+    transform: translate(-50%, -50%) rotate(var(--cursor-rotation, 0deg)) scale(1.5);
+  }
+
+  .cricket-cursor-trail {
+    width: 15px;
+    height: 15px;
+    margin: -7.5px 0 0 -7.5px;
+    border: 1px solid rgba(179, 46, 39, 0.4);
+    border-radius: 50%;
+    background: rgba(166, 36, 30, 0.12);
+    box-shadow: 0 0 18px rgba(159, 35, 29, 0.15);
+    transition: opacity 220ms ease;
+  }
+}
+
+/* Cricket-ball wipe page transition. The dark veil slides right with a
+   rolling ball leading the reveal. Tweened by transitions.js. */
+.page-transition-layer {
+  position: fixed;
+  z-index: 20000;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  visibility: hidden;
+  pointer-events: none;
+  opacity: 0;
+  background: #060807;
+  will-change: transform;
+}
+
+.page-transition-layer.is-active,
+.page-transition-incoming .page-transition-layer {
+  visibility: visible;
+  pointer-events: auto;
+  opacity: 1;
+}
+
+.page-transition-ball-wrap {
+  position: absolute;
+  z-index: 2;
+  top: 38%;
+  left: 0;
+  width: clamp(52px, 7vw, 84px);
+  height: clamp(52px, 7vw, 84px);
+  will-change: transform;
+}
+
+/* The cricket ball: glossy red sphere with a cream seam line. */
+.page-transition-ball {
+  position: absolute;
+  inset: 0;
+  display: block;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 28%, #c22b21 0%, #8e1a12 55%, #520a06 100%);
+  box-shadow: 0 14px 22px rgba(0, 0, 0, 0.55), inset -6px -8px 10px rgba(0, 0, 0, 0.35), inset 3px 4px 6px rgba(255, 255, 255, 0.16);
+  will-change: transform;
+}
+
+.page-transition-ball::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 4%;
+  right: 4%;
+  height: 2px;
+  margin-top: -1px;
+  border-radius: 2px;
+  background: rgba(240, 214, 190, 0.72);
+  box-shadow: 0 0 3px rgba(255, 240, 220, 0.35);
+}
+
+/* Motion-blur streak trailing the ball. */
+.page-transition-ball-streak {
+  position: absolute;
+  right: 90%;
+  top: 20%;
+  display: block;
+  width: 210px;
+  height: 60%;
+  pointer-events: none;
+  background: linear-gradient(to left, rgba(146, 30, 22, 0.5), rgba(146, 30, 22, 0) 78%);
+  filter: blur(1.5px);
+  opacity: 0.75;
+}
+
+.is-page-transitioning { overflow: hidden; }
+
+@media (prefers-reduced-motion: reduce) {
+  .page-transition-layer { transition: none !important; }
+}
+
+/* ============================================================
+   Buzzworthy-style navigation animations
+   ============================================================ */
+
+/* Mask-link: on hover the label wipes out to the right while an
+   accent-colored duplicate wipes in from the left (clip-path swap). */
+.mask-link { position: relative; }
+.mask-link span {
+  display: inline-block;
+  clip-path: inset(0% 0% 0% 0%);
+  -webkit-clip-path: inset(0% 0% 0% 0%);
+  transition: clip-path 500ms cubic-bezier(1, 0, 0, 1);
+  -webkit-transition: clip-path 500ms cubic-bezier(1, 0, 0, 1);
+}
+.mask-link::before {
+  content: attr(data-id);
+  position: absolute;
+  top: 26px;
+  left: 0;
+  z-index: 2;
+  width: 100%;
+  text-align: left;
+  color: var(--orange);
+  clip-path: inset(0% 0% 0% 100%);
+  -webkit-clip-path: inset(0% 0% 0% 100%);
+  transition: clip-path 500ms cubic-bezier(1, 0, 0, 1);
+  -webkit-transition: clip-path 500ms cubic-bezier(1, 0, 0, 1);
+}
+.mask-link:hover span,
+.mask-link.hovered span { clip-path: inset(0% 100% 0% 0%); }
+.mask-link:hover::before,
+.mask-link.hovered::before {
+  transition-delay: 0.1s;
+  -webkit-transition-delay: 0.1s;
+  clip-path: inset(0% 0% 0% 0%);
+}
+
+/* Small cricket-ball dot that slides off-screen with the wipe. */
+.mask-link .nav-dot {
+  position: relative;
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-left: 9px;
+  border: 1px solid rgba(141, 30, 26, 0.55);
+  border-radius: 50%;
+  background: #9b312a;
+  vertical-align: 2px;
+  will-change: transform;
+}
+.mask-link .nav-dot::after {
+  position: absolute;
+  top: 8%;
+  bottom: 8%;
+  left: 50%;
+  width: 2px;
+  border-right: 1px dashed rgba(240, 199, 168, 0.9);
+  border-left: 1px dashed rgba(240, 199, 168, 0.9);
+  border-radius: 50%;
+  content: "";
+}
+html:not(.gsap-ready) .mask-link:hover .nav-dot {
+  transition: opacity 300ms ease;
+  opacity: 0;
+}
+
+/* Current-page indicator: three mini stumps with a bail, popping up
+   on page load (geometry lives on ::after in style.css). */
+.site-nav a[aria-current="page"]::after {
+  transform-origin: 50% 100%;
+  animation: nav-stumps-in 700ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes nav-stumps-in {
+  0% { opacity: 0; transform: translateY(6px) scaleY(0.2); }
+  60% { opacity: 1; transform: translateY(-2px) scaleY(1.08); }
+  100% { opacity: 1; transform: translateY(0) scaleY(1); }
+}
+
+/* Inactive links: a crease line sweeps in along the baseline on
+   hover/focus (the active link's ::after is the stumps instead). */
+.site-nav a:not([aria-current="page"])::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 17px;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--nav-accent, var(--orange)));
+  transform: scaleX(0);
+  transform-origin: 0% 50%;
+  transition: transform 420ms cubic-bezier(0.19, 1, 0.22, 1);
+}
+.site-nav a:not([aria-current="page"]):hover::after,
+.site-nav a:not([aria-current="page"]):focus-visible::after { transform: scaleX(1); }
+.home-page .site-nav a:not([aria-current="page"])::after { background: linear-gradient(90deg, transparent, rgba(226, 173, 81, 0.9)); }
+
+@media (max-width: 780px) {
+  .mask-link::before { top: 12px; }
+}
+
+.home-page .mask-link::before { color: #e2ad51; }
+.home-page .mask-link .nav-dot { border-color: rgba(255, 225, 198, 0.6); background: #d9645b; }
+
+/* Text-link: directional underline (grows from the left, shrinks to the right). */
+.text-link { position: relative; }
+.text-link::before {
+  content: "";
+  display: block;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--orange);
+  transform: scaleX(0);
+  animation: text-underline-out 500ms cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+.text-link:hover::before {
+  animation: text-underline-in 500ms cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+@keyframes text-underline-in {
+  0% { transform-origin: 0% 0%; transform: scaleX(0); }
+  1% { transform: scaleX(0); }
+  100% { transform-origin: 0% 0%; transform: scaleX(1); }
+}
+@keyframes text-underline-out {
+  0% { transform-origin: 100% 0%; transform: scaleX(1); }
+  1% { transform: scaleX(1); }
+  100% { transform-origin: 100% 0%; transform: scaleX(0); }
+}
+
+/* Arrow-link: the CTA arrow rotates in from 45deg and slides in on hover. */
+.cinematic-button-primary span {
+  transition: transform 500ms cubic-bezier(0.86, 0, 0.07, 1);
+  transform: translateX(-10px) rotate(45deg) scale(0);
+}
+.cinematic-button-primary:hover span {
+  transition-delay: 0.12s;
+  transform: translateX(0) rotate(0deg) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mask-link span,
+  .mask-link::before,
+  .mask-link .nav-dot,
+  .text-link::before,
+  .cinematic-button-primary span {
+    transition: none !important;
+    animation: none !important;
+  }
+  .mask-link:hover span,
+  .mask-link.hovered span,
+  .mask-link span { clip-path: inset(0% 0% 0% 0%); }
+  .mask-link:hover::before,
+  .mask-link.hovered::before,
+  .mask-link::before { clip-path: inset(0% 0% 0% 100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-nav a[aria-current="page"]::after { animation: none; }
+  .site-nav a:not([aria-current="page"])::after { transition: none; }
+}
+
+/* ============================================================
+   Academy play scene — bowler vs batter loop
+   One shared 7.2s timeline, so every part stays in sync.
+   ============================================================ */
+
+.play-bowler { animation: play-bowler-hop 7.2s ease-in-out infinite; }
+.play-arm-bowling { animation: play-bowling-arm 7.2s ease-in-out infinite; }
+.play-batter { animation: play-batter-sway 7.2s ease-in-out infinite; }
+.play-bat { animation: play-bat-swing 7.2s ease-in-out infinite; }
+.play-ball { animation: play-ball-flight 7.2s linear infinite; }
+
+/* Bowler: small run-up hop, then lean into the delivery. */
+@keyframes play-bowler-hop {
+  0%, 6% { transform: translate(0, 0) rotate(0deg); }
+  2% { transform: translate(-1.4em, 0.3em) rotate(0deg); }
+  4% { transform: translate(-0.6em, -0.4em) rotate(0deg); }
+  12% { transform: translate(0, 0) rotate(-5deg); }
+  20%, 100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+/* Bowling arm windmill: cocked up behind the head, over the top,
+   down and through. The ball leaves the hand at the apex (10%). */
+@keyframes play-bowling-arm {
+  0%, 10% { transform: rotate(-160deg); }
+  15% { transform: rotate(40deg); }
+  24%, 100% { transform: rotate(26deg); }
+}
+
+/* Batter: load back, then lean into the shot. */
+@keyframes play-batter-sway {
+  0%, 48% { transform: rotate(0deg); }
+  54% { transform: rotate(3deg); }
+  62% { transform: rotate(-4deg); }
+  70%, 100% { transform: rotate(0deg); }
+}
+
+/* Bat: backlift, strike through the line, follow through, reset. */
+@keyframes play-bat-swing {
+  0%, 50% { transform: rotate(40deg); }
+  58% { transform: rotate(-8deg); }
+  66% { transform: rotate(-110deg); }
+  84%, 100% { transform: rotate(40deg); }
+}
+
+/* Ball: leaves the hand at the top of the arc (10%), pitches,
+   meets the bat, then flies up and away. Positions are % of scene. */
+@keyframes play-ball-flight {
+  0%, 8% { left: 25%; top: 34%; opacity: 0; transform: rotate(0deg) scaleY(1); }
+  10% { left: 26%; top: 44%; opacity: 1; transform: rotate(30deg) scaleY(1); }
+  26% { left: 40%; top: 58%; opacity: 1; transform: rotate(300deg) scaleY(1); animation-timing-function: ease-in; }
+  30% { left: 46%; top: 87%; opacity: 1; transform: rotate(400deg) scaleY(0.78); animation-timing-function: ease-out; }
+  34% { left: 50%; top: 55%; opacity: 1; transform: rotate(470deg) scaleY(1); }
+  54% { left: 75%; top: 42%; opacity: 1; transform: rotate(820deg) scaleY(1); }
+  56% { left: 75.5%; top: 42%; opacity: 1; transform: rotate(860deg) scaleY(0.88); animation-timing-function: ease-out; }
+  60% { left: 79%; top: 28%; opacity: 1; transform: rotate(940deg) scaleY(1); }
+  64% { left: 84%; top: 16%; opacity: 1; transform: rotate(1010deg) scaleY(1); }
+  68% { left: 88%; top: 9%; opacity: 1; transform: rotate(1070deg) scaleY(1); animation-timing-function: ease-in; }
+  72%, 100% { left: 90%; top: 4%; opacity: 0; transform: rotate(1150deg) scaleY(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .play-bowler,
+  .play-arm-bowling,
+  .play-batter,
+  .play-bat,
+  .play-ball { animation: none; }
+  .play-ball { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+/* ============================================================
+   Marquee ticker strip
+   ============================================================ */
+.marquee-strip:hover .marquee-track { animation-play-state: paused; }
+
+@keyframes marquee-scroll {
+  to { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; }
+}
+
+/* ============================================================
+   Footer wave divider
+   ============================================================ */
+.footer-wave__layer--front { animation: wave-drift 12s linear infinite; }
+.footer-wave__layer--back { animation: wave-drift-reverse 19s linear infinite; }
+
+@keyframes wave-drift {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes wave-drift-reverse {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footer-wave__layer--front,
+  .footer-wave__layer--back { animation: none; }
+}
+
+/* ============================================================
+   Homepage hero particles
+   ============================================================ */
+@keyframes particle-rise {
+  0% { transform: translate(0, 0) scale(1); opacity: 0; }
+  10% { opacity: 0.75; }
+  55% { opacity: 0.4; }
+  100% { transform: translate(26px, -76vh) scale(0.35); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-particles i { animation: none; opacity: 0; }
+}
+
+/* ============================================================
+   Shimmer sweep on primary buttons
+   ============================================================ */
+@keyframes shimmer-sweep {
+  0% { transform: skewX(-24deg) translateX(0); opacity: 0; }
+  15% { opacity: 0.85; }
+  100% { transform: skewX(-24deg) translateX(520%); opacity: 0; }
+}
+
+@media (hover: hover) {
+  .cinematic-button-primary:hover::after,
+  .button-primary:hover::after { animation: shimmer-sweep 800ms cubic-bezier(0.4, 0.2, 0.2, 1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cinematic-button-primary::after,
+  .button-primary::after { display: none; }
+}
+
+/* ============================================================
+   Gallery tiles — staggered zoom-in reveal is tweened by
+   animations.js; Ken Burns drift on hover lives here.
+   ============================================================ */
+.gallery-tile { background-size: 108% 108%; background-position: 35% 35%; transition: background-size 1400ms cubic-bezier(0.22, 0.61, 0.36, 1), background-position 1400ms cubic-bezier(0.22, 0.61, 0.36, 1); }
+
+@media (hover: hover) {
+  .gallery-tile:hover { background-size: 152% 152%; background-position: 72% 72%; }
+  .gallery-grid .gallery-tile:nth-child(even):hover { background-position: 18% 18%; }
+  .gallery-grid .gallery-tile:nth-child(3n):hover { background-position: 30% 75%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gallery-tile { transition: none; }
+}
+
+/* ============================================================
+   Animated dark/light theme toggle
+   States live in theme.css; one-shot flip + ripple are driven
+   by the temporary .is-switching class set in theme.js.
+   ============================================================ */
+@keyframes theme-flip {
+  55% { transform: rotate(calc(var(--rest-rotation) + 150deg)) scale(1.18); }
+  80% { transform: rotate(var(--rest-rotation)) scale(0.94); }
+  100% { transform: rotate(var(--rest-rotation)) scale(1); }
+}
+.theme-toggle.is-switching .theme-toggle__icon { animation: theme-flip 700ms cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+
+@keyframes theme-ripple {
+  0% { opacity: 0.9; transform: scale(0.72); }
+  100% { opacity: 0; transform: scale(1.6); }
+}
+
+@keyframes theme-twinkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+@keyframes theme-wiggle {
+  0%, 100% { transform: rotate(var(--rest-rotation)); }
+  30% { transform: rotate(calc(var(--rest-rotation) + 12deg)); }
+  65% { transform: rotate(calc(var(--rest-rotation) - 8deg)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-toggle.is-switching::after,
+  .theme-toggle.is-switching .theme-toggle__icon,
+  .theme-toggle:hover .theme-toggle__icon,
+  [data-theme="dark"] .theme-stars,
+  [data-theme="dark"] .theme-stars::before,
+  [data-theme="dark"] .theme-stars::after { animation: none !important; }
+}
